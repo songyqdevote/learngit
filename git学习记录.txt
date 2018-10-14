@@ -34,13 +34,28 @@ CVS及SVN都是集中式的版本控制系统
 	Reinitialized existing Git repository in C:/Users/Administrator/learngit/.git/	（之前已经初始化了）	
 	使用ls-ah 命令可以查到.git目录；
 2.2把文件添加到版本库
-	用git add 命令把文件添加到仓库；
-	用git commit命令把文件添加到仓库；
+	1)、创建一个文件，一定把文件放到learngit目录下，使用git add 命令把文件添加到仓库；
+	eg：git add git学习记录.txt;
+	执行上面的命令，没有任何显示，这就对了，Unix的哲学是“没有消息就是好消息”，说明添加成功。
+	2)、用git commit命令把文件添加到仓库；
 	$ git commit -m "A gitlearn txt" 引号内容为描述内容；
 	初始化一个Git仓库，使用git init命令。
 	添加文件到Git仓库，分两步：
 	第一步，使用命令git add <file>，注意，可反复多次使用，添加多个文件；
 	第二步，使用命令git commit，完成。
+	查看状态：
+	$ git status
+	On branch master
+	Changes not staged for commit:
+	  (use "git add <file>..." to update what will be committed)
+	  (use "git checkout -- <file>..." to discard changes in working directory)
+
+			modified:   "git\345\255\246\344\271\240\350\256\260\345\275\225.txt"
+			no changes added to commit (use "git add" and/or "git commit -a")
+	git status命令可以让我们时刻掌握仓库当前的状态，上面的命令输出告诉我们，
+	文件被修改过了，但还没有准备提交的修改。
+   使用git diff 文件名 查看更改内容；
+	
 	git log命令查看历史记录；
 	git log --pretty=oneline 简略形式显示；
 	在Git中，用HEAD表示当前版本，上一个版本就是HEAD^，上上一个版本就是HEAD^^，
