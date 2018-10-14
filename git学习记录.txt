@@ -1,0 +1,110 @@
+﻿2018.08.30
+一、git介绍
+Git：分布式版本控制系统。
+	Git是目前世界上最先进的分布式版本控制系统。
+	集中式版本控制系统，版本库是集中存放在中央服务器的，而干活的时候，用的都是自己的电脑，所以要先从中央服务器取得最新的版本，然后开始干活，干完活了，再把自己的活推送给中央服务器。中央服务器就好比是一个图书馆，你要改一本书，必须先从图书馆借出来，然后回到家自己改，改完了，再放回图书馆。
+	分布式版本控制系统根本没有“中央服务器”，每个人的电脑上都是一个完整的版本库，这样，你工作的时候，就不需要联网了，因为版本库就在你自己的电脑上。既然每个人电脑上都有一个完整的版本库，那多个人如何协作呢？比方说你在自己电脑上改了文件A，你的同事也在他的电脑上改了文件A，这时，你们俩之间只需把各自的修改推送给对方，就可以互相看到对方的修改了。
+Linus编写 Linux之父 牛逼人物。
+CVS及SVN都是集中式的版本控制系统	
+1.git的安装
+
+1.1 Linux系统平台
+	输入git，检查系统是否安装git；
+	通过命令sudo apt-get install git完成git安装。
+1.2 Windows平台
+	git官网下载安装，在开始菜单选Git-Git Bash出现命令行窗口
+	参数设置：
+	$ git config --global user.name"Your Name“
+	$ git config --global user.email"Your Email"
+	
+2   创建版本库
+	创建空目录：
+	$ mkdir gitlearn
+	$ cd gitlearn
+	$ pwd
+	pwd命令用于显示当前目录
+	通过git init命令把这个目录变成Git可以管理的仓库：
+	如果没有看到.git目录，那是因为这个目录默认是隐藏的，用ls -ah命令就可以看见
+	pwd命令用于显示当前目录。	
+第二步：
+	通过git init命令把这个目录变成Git可以管理的仓库：
+
+	$ git init
+	Initialized empty Git repository in 。。。
+	Reinitialized existing Git repository in C:/Users/Administrator/learngit/.git/	（之前已经初始化了）	
+	使用ls-ah 命令可以查到.git目录；
+2.2把文件添加到版本库
+	用git add 命令把文件添加到仓库；
+	用git commit命令把文件添加到仓库；
+	$ git commit -m "A gitlearn txt" 引号内容为描述内容；
+	初始化一个Git仓库，使用git init命令。
+	添加文件到Git仓库，分两步：
+	第一步，使用命令git add <file>，注意，可反复多次使用，添加多个文件；
+	第二步，使用命令git commit，完成。
+	git log命令查看历史记录；
+	git log --pretty=oneline 简略形式显示；
+	在Git中，用HEAD表示当前版本，上一个版本就是HEAD^，上上一个版本就是HEAD^^，
+	当然往上100个版本写100个^比较容易数不过来，所以写成HEAD~100；
+	使用git reset --hard HEAD^返回上一个版本；
+	也可以使用git reset --hard id恢复版本；
+	使用git reflog用来记录每个版本id；
+
+3 工作区与暂存区
+	每次修改都要add和commit；
+        命令git checkout -- <file>可以丢弃工作区的修改：
+	用命令git reset HEAD file可以把暂存区的修改撤销掉（unstage），重新放回工作区：
+
+4 远程仓库
+	登陆GitHub，然后，在右上角找到“Create a new repo”按钮，创建一个新的仓库；
+	本地：git remote add origin git@github.com:songyqwork/gitlearn.git	
+	SSH警告
+
+	当你第一次使用Git的clone或者push命令连接GitHub时，会得到一个警告：
+
+	The authenticity of host 'github.com (xx.xx.xx.xx)' can't be established.
+	RSA key fingerprint is xx.xx.xx.xx.xx.
+	Are you sure you want to continue connecting (yes/no)?
+	这是因为Git使用SSH连接，而SSH连接在第一次验证GitHub服务器的Key时，需要你确认GitHub的Key的指纹信息是否真的来自GitHub	的服务器，输入yes回车即可。
+	Git创建一个分支很快，因为除了增加一个dev指针，改改HEAD的指向，工作区的文件都没有任何变化！
+ 	不过，从现在开始，对工作区的修改和提交就是针对dev分支了，比如新提交一次后，dev指针往前移动一步，而master指针不变：
+	首先，我们创建dev分支，然后切换到dev分支：
+
+	$ git checkout -b dev
+	Switched to a new branch 'dev'
+	git checkout命令加上-b参数表示创建并切换，相当于以下两条命令：
+
+	$ git branch dev
+	$ git checkout dev
+	然后，用git branch命令查看当前分支：
+
+	$ git branch
+	* dev
+ 	 master
+	git branch命令会列出所有分支，当前分支前面会标一个*号。
+
+	然后，我们就可以在dev分支上正常提交，比如对readme.txt做个修改，加上一行：
+
+	Creating a new branch is quick.
+	然后提交：
+
+	$ git add readme.txt 
+	$ git commit -m "branch test"
+	[dev fec145a] branch test
+ 	1 file changed, 1 insertion(+)
+	现在，dev分支的工作完成，我们就可以切换回master分支：
+
+	$ git checkout master
+	Switched to branch 'master'
+	切换回master分支后，再查看一个readme.txt文件，刚才添加的内容不见了！因为那个提交是在dev分支上，而master分支此刻的提	交点并没有变：
+
+
+
+
+	
+	
+	
+	
+
+	
+	
+
