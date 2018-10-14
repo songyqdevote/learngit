@@ -55,22 +55,89 @@ CVS及SVN都是集中式的版本控制系统
 	git status命令可以让我们时刻掌握仓库当前的状态，上面的命令输出告诉我们，
 	文件被修改过了，但还没有准备提交的修改。
    使用git diff 文件名 查看更改内容；
+	小结
+	要随时掌握工作区的状态，使用git status命令。
+	如果git status告诉你有文件被修改过，用git diff可以查看修改内容。
 	
-	git log命令查看历史记录；
+	git log命令查看历史记录；git log命令显示从最近到最远的提交日志
 	git log --pretty=oneline 简略形式显示；
+	你看到的一大串类似1094adb...的是commit id（版本号），和SVN不一样，Git的commit id不是1，2，3……递增的数字，而是一个SHA1计算出来的一个非常大的数字，用十六进制表示，而且你看到的commit id和我的肯定不一样，以你自己的为准。为什么commit id需要用这么一大串数字表示呢？因为Git是分布式的版本控制系统，后面我们还要研究多人在同一个版本库里工作，如果大家都用1，2，3……作为版本号，那肯定就冲突了。
 	在Git中，用HEAD表示当前版本，上一个版本就是HEAD^，上上一个版本就是HEAD^^，
 	当然往上100个版本写100个^比较容易数不过来，所以写成HEAD~100；
 	使用git reset --hard HEAD^返回上一个版本；
 	也可以使用git reset --hard id恢复版本；
 	使用git reflog用来记录每个版本id；
+	Git为我们自动创建的第一个分支master，以及指向master的一个指针叫HEAD。
+	
+	小结
+		现在总结一下：
+
+		HEAD指向的版本就是当前版本，因此，Git允许我们在版本的历史之间穿梭，使用命令git reset --hard commit_id。
+
+		穿梭前，用git log可以查看提交历史，以便确定要回退到哪个版本。
+
+		要重返未来，用git reflog查看命令历史，以便确定要回到未来的哪个版本。
 
 3 工作区与暂存区
 	每次修改都要add和commit；
         命令git checkout -- <file>可以丢弃工作区的修改：
 	用命令git reset HEAD file可以把暂存区的修改撤销掉（unstage），重新放回工作区：
+	前面讲了我们把文件往Git版本库里添加的时候，是分两步执行的：
+
+	第一步是用git add把文件添加进去，实际上就是把文件修改添加到暂存区；
+
+	第二步是用git commit提交更改，实际上就是把暂存区的所有内容提交到当前分支。
+	git跟踪的是修改不是文件，小结
+    理解了Git是如何跟踪修改的，每次修改，如果不用git add到暂存区，那就不会加入到commit中。
+	撤销：
+	命令git checkout -- readme.txt意思就是，把readme.txt文件在工作区的修改全部撤销，这里有两种情况：
+
+	一种是readme.txt自修改后还没有被放到暂存区，现在，撤销修改就回到和版本库一模一样的状态；
+
+	一种是readme.txt已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态。
+
+	总之，就是让这个文件回到最近一次git commit或git add时的状态。
+	cat 文件名： 查看文件内容。
+	git checkout -- file命令中的--很重要，没有--，就变成了“切换到另一个分支”的命令，我们在后面的分支管理中会再次遇到git checkout命令。
+	Git同样告诉我们，用命令git reset HEAD <file>可以把暂存区的修改撤销掉（unstage），重新放回工作区：
+	小结
+
+	场景1：当你改乱了工作区某个文件的内容，想直接丢弃工作区的修改时，用命令git checkout -- file。
+
+	场景2：当你不但改乱了工作区某个文件的内容，还添加到了暂存区时，想丢弃修改，分两步，第一步用命令git reset HEAD <file>，就回到了场景1，第二步按场景1操作。
+
+	场景3：已经提交了不合适的修改到版本库时，想要撤销本次提交，参考版本回退一节，不过前提是没有推送到远程库。
+	删除文件：
+	一是确实要从版本库中删除该文件，那就用命令git rm删掉，并且git commit：
+
+	$ git rm test.txt
+	rm 'test.txt'
+
+	$ git commit -m "remove test.txt"
+	[master d46f35e] remove test.txt
+	 1 file changed, 1 deletion(-)
+	 delete mode 100644 test.txt
+	现在，文件就从版本库中被删除了。
+	另一种情况是删错了，因为版本库里还有呢，所以可以很轻松地把误删的文件恢复到最新版本：
+
+	$ git checkout -- test.txt
+	git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”。
 
 4 远程仓库
-	登陆GitHub，然后，在右上角找到“Create a new repo”按钮，创建一个新的仓库；
+	本地Git仓库和GitHub仓库之间的传输是通过SSH加密的。
+	创建github账户，登陆GitHub，然后，在右上角找到“Create a new repo”按钮，创建一个新的仓库；
+	第1步：创建SSH Key。在用户主目录下，看看有没有.ssh目录，如果有，再看看这个目录下有没有id_rsa和id_rsa.pub这两个文件，如果已经有了，可直接跳到下一步。如果没有，打开Shell（Windows下打开Git Bash），创建SSH Key：
+
+	$ ssh-keygen -t rsa -C "youremail@example.com"
+	如果一切顺利的话，可以在用户主目录里找到.ssh目录，里面有id_rsa和id_rsa.pub两个文件，这两个就是SSH Key的秘钥对，id_rsa是私钥，不能泄露出去，id_rsa.pub是公钥，可以放心地告诉任何人。
+
+	第2步：登陆GitHub，打开“Account settings”，“SSH Keys”页面：
+
+	然后，点“Add SSH Key”，填上任意Title，在Key文本框里粘贴id_rsa.pub文件的内容：
+		
+	
+	
+	
 	本地：git remote add origin git@github.com:songyqwork/gitlearn.git	
 	SSH警告
 
